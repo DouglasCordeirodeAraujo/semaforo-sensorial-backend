@@ -6,6 +6,6 @@ import { autenticarToken } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.get("/listar-escolas", autenticarToken, listarEscolas);
-router.post("/criar-escola", autenticarToken, criarEscola);
+router.post("/criar-escola", criarEscola);
 
 export default router;
