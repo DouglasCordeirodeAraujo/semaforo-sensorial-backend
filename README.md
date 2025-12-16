@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS leitura_ruido (
 - **GET** `/salas/listar-salas/` — lista todas as salas  
 - **POST** `/salas/criar-sala/` — cria nova sala  
 ```json
-{ "cor_sala": "blue", "nome_sala": "teste", "id_escola": "2" }
+{ "cor_sala": "#000000", "nome_sala": "teste", "id_escola": "2" }
 ```
 - **GET** `/salas/listar-sala/:id` — lista sala por ID  
 - **PUT** `/salas/atualizar-sala/:id` — atualiza sala  
@@ -219,5 +219,6 @@ CREATE TABLE IF NOT EXISTS leitura_ruido (
 - **GET** `/estatisticas/sala/:id_sala/por-hora` — média por dia  
 - **GET** `/estatisticas/sala/:id_sala/ultimos-dias/` — média últimos N dias  
 - **GET** `/estatisticas/ultimas-por-sala/` — última leitura de todas as salas
-
+- **GET** `/estatisticas/linha` - gráfico de linhas com decibéis de cada sala por hora.
+- **GET** `/estatisticas/barra` - quantidade de decibéis registrado por sala.
 ---

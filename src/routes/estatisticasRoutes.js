@@ -8,7 +8,9 @@ import {
     ultimasPorSala,
     mediaPorDia,
     mediaPorHora,
-    resumoPorSala
+    resumoPorSala,
+    graficoBarra,
+    graficoLinha
 } from "../controllers/estatisticasController.js";
 
 const router = express.Router();
@@ -30,5 +32,11 @@ router.get("/sala/:id_sala/ultimos-dias", autenticarToken, verificarEscola, medi
 
 // Última leitura de todas as salas (dashboard)
 router.get("/ultimas-por-sala", autenticarToken, ultimasPorSala);
+
+
+router.get("/linha", autenticarToken, graficoLinha);
+
+
+router.get("/barra", autenticarToken, graficoBarra);
 
 export default router;

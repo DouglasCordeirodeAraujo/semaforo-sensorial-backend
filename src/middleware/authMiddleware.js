@@ -1,27 +1,27 @@
 import jwt from "jsonwebtoken";
 
 export const autenticarToken = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
+  const authHeader = req.headers["authorization"];
 
-    if (!authHeader) {
-        return res.status(401).json({ error: "Token não fornecido" });
+  if (!authHeader) {
+    return res.status(401).json({ error: "Token não fornecido" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ error: "Token inválido" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: "Token expirado ou inválido" });
     }
 
-    // Formato esperado:  "Bearer token123"
-    const token = authHeader.split(" ")[1];
+    // 🔥 COMPATIBILIDADE TOTAL
+    req.usuario = decoded; // controllers antigos
+    req.user = decoded;    // padrão novo
 
-    if (!token) {
-        return res.status(401).json({ error: "Token inválido" });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, usuario) => {
-        if (err) {
-            return res.status(403).json({ error: "Token expirado ou inválido" });
-        }
-
-        // Adiciona os dados do token na requisição
-        req.usuario = usuario;
-
-        next();
-    });
+    next();
+  });
 };

@@ -157,3 +157,63 @@ export const ultimasPorSala = async (req, res) => {
         res.status(500).json({ error: "Erro interno" });
     }
 };
+
+export const graficoLinha = async (req, res) => {
+  try {
+    const { id_escola } = req.user;
+
+    const sql = `
+      SELECT 
+        s.id_sala,
+        s.nome_sala,
+        s.cor_sala,
+        DATE_FORMAT(l.data_hora, '%Y-%m-%d %H:00') AS hora,
+        AVG(l.decibeis) AS media_decibeis
+      FROM leitura_ruido l
+      INNER JOIN sala_de_aula s ON l.id_sala = s.id_sala
+      WHERE s.id_escola = ?
+        AND l.data_hora >= NOW() - INTERVAL 24 HOUR
+      GROUP BY 
+        s.id_sala,
+        s.nome_sala,
+        s.cor_sala,
+        DATE_FORMAT(l.data_hora, '%Y-%m-%d %H:00')
+      ORDER BY hora ASC;
+    `;
+
+    const [rows] = await db.query(sql, [id_escola]);
+    res.json(rows);
+
+  } catch (err) {
+    console.error("ERRO GRAFICO LINHA:", err);
+    res.status(500).json({ erro: "Erro gráfico linha" });
+  }
+};
+
+export const graficoBarra = async (req, res) => {
+  try {
+    const { id_escola } = req.user;
+
+    const sql = `
+      SELECT
+        s.id_sala,
+        s.nome_sala,
+        s.cor_sala,
+        MAX(l.decibeis) AS pico_decibeis
+      FROM sala_de_aula s
+      LEFT JOIN leitura_ruido l
+        ON l.id_sala = s.id_sala
+        AND DATE(l.data_hora) = CURDATE()
+      WHERE s.id_escola = ?
+      GROUP BY s.id_sala, s.nome_sala, s.cor_sala
+      ORDER BY pico_decibeis DESC;
+    `;
+
+    const [rows] = await db.query(sql, [id_escola]);
+    res.json(rows);
+
+  } catch (err) {
+    console.error("ERRO GRAFICO BARRA PICO:", err);
+    res.status(500).json({ erro: "Erro gráfico barra pico" });
+  }
+};
